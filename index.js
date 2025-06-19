@@ -23,18 +23,18 @@ function run() {
         yield (0, add_user_1.addUser)({
             id: "u2",
             username: "lucy",
-            games: ["cs2", "apex"],
+            games: ["minecraft", "apex"],
             honor: 85,
         });
         // Match a new user
         const rawMatches = yield (0, match_user_1.matchUser)({
             username: "ghost",
-            games: ["valorant", "cs2"],
-            honor: 75,
+            games: ["wow", "cs2"],
+            honor: 65,
         });
         // @ts-ignore
         const filtered = (0, filter_results_1.filterByOverlap)(["valorant", "cs2"], rawMatches, 70);
-        console.log("🔍 Best matches:", filtered.map((m) => m.metadata.username));
+        console.log("🔍 Best matches:", filtered.map((m) => [m.id, m.metadata]));
     });
 }
 run();

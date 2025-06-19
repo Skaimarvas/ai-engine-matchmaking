@@ -14,20 +14,20 @@ async function run() {
   await addUser({
     id: "u2",
     username: "lucy",
-    games: ["cs2", "apex"],
+    games: ["minecraft", "apex"],
     honor: 85,
   });
 
   // Match a new user
   const rawMatches = await matchUser({
     username: "ghost",
-    games: ["valorant", "cs2"],
-    honor: 100,
+    games: ["wow", "cs2"],
+    honor: 65,
   });
   // @ts-ignore
   const filtered = filterByOverlap(["valorant", "cs2"], rawMatches, 70);
 
-  console.log("🔍 Best matches:", filtered.map((m) => m.metadata.username));
+  console.log("🔍 Best matches:", filtered.map((m) => [m.id, m.metadata]));
 }
 
 run();
