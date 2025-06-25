@@ -19,6 +19,9 @@ function matchUser(user) {
             vector,
             topK: 5,
             includeMetadata: true,
+            filter: {
+                honor_rating: { $gte: user.honor_rating },
+            },
         });
         return res.matches;
     });

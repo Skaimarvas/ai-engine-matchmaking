@@ -1,7 +1,7 @@
 {
   "type": "commonjs",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "npx tsc && node ./index.js"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^6.1.1",

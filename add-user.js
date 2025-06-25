@@ -22,7 +22,10 @@ function addUser(user) {
                 metadata: {
                     username: user.username,
                     games: user.games.join(", "),
-                    honor: user.honor,
+                    availability: user.availability.join(", "),
+                    play_style: user.play_style.join(", "),
+                    honor_rating: user.honor_rating,
+                    bio: user.bio,
                 },
             },
         ]);

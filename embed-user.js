@@ -8,20 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.embedUserProfile = embedUserProfile;
-// ai-engine/embedUser.ts
-const openai_1 = require("openai");
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const openai = new openai_1.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai_client_1 = require("./client/openai-client");
 function embedUserProfile(profile) {
     return __awaiter(this, void 0, void 0, function* () {
-        const input = `Games: ${profile.games.join(", ")}, Honor: ${profile.honor}`;
-        const res = yield openai.embeddings.create({
+        const input = `
+  Games: ${profile.games.join(", ")},
+  Availability: ${profile.availability.join(", ")},
+  Play Style: ${profile.play_style.join(", ")},
+  Honor: ${profile.honor_rating}, 
+  Bio: ${profile.bio} `;
+        const res = yield openai_client_1.openai.embeddings.create({
             model: "text-embedding-3-small",
             input,
         });

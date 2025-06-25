@@ -10,31 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const add_user_1 = require("./add-user");
-const filter_results_1 = require("./filter-results");
+const mock_data_1 = require("./libs/data/mock-data");
 const match_user_1 = require("./match-user");
+const rerank_matches_1 = require("./rerank-matches");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, add_user_1.addUser)({
-            id: "u1",
-            username: "kai",
-            games: ["valorant", "lol"],
-            honor: 80,
+        const addUsers = () => __awaiter(this, void 0, void 0, function* () {
+            return Promise.all(mock_data_1.matchesArray.map((user) => (0, add_user_1.addUser)(user)));
         });
-        yield (0, add_user_1.addUser)({
-            id: "u2",
-            username: "lucy",
-            games: ["minecraft", "apex"],
-            honor: 85,
-        });
-        // Match a new user
-        const rawMatches = yield (0, match_user_1.matchUser)({
-            username: "ghost",
-            games: ["wow", "cs2"],
-            honor: 65,
-        });
-        // @ts-ignore
-        const filtered = (0, filter_results_1.filterByOverlap)(["valorant", "cs2"], rawMatches, 70);
-        console.log("🔍 Best matches:", filtered.map((m) => [m.id, m.metadata]));
+        yield addUsers();
+        const rawMatches = yield (0, match_user_1.matchUser)(mock_data_1.player);
+        const ranked = yield (0, rerank_matches_1.rerankMatches)(mock_data_1.player, rawMatches);
+        console.log("🧠 GPT-Ranked Matches:");
+        ranked.forEach((m, i) => console.log(`${i + 1}. ${m.username} — ${m.reason}`));
     });
 }
 run();

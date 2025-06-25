@@ -1,33 +1,21 @@
 import { addUser } from "./add-user";
-import { filterByOverlap } from "./filter-results";
+import { matchesArray, player } from "./libs/data/mock-data";
 import { matchUser } from "./match-user";
-
+import { rerankMatches } from "./rerank-matches";
 
 async function run() {
-  await addUser({
-    id: "u1",
-    username: "kai",
-    games: ["valorant", "lol"],
-    honor: 80,
-  });
+  const addUsers = async () => {
+    return Promise.all(matchesArray.map((user) => addUser(user)));
+  };
 
-  await addUser({
-    id: "u2",
-    username: "lucy",
-    games: ["minecraft", "apex"],
-    honor: 85,
-  });
+  await addUsers();
+  const rawMatches = await matchUser(player);
 
-  // Match a new user
-  const rawMatches = await matchUser({
-    username: "ghost",
-    games: ["wow", "cs2"],
-    honor: 65,
-  });
-  // @ts-ignore
-  const filtered = filterByOverlap(["valorant", "cs2"], rawMatches, 70);
-
-  console.log("🔍 Best matches:", filtered.map((m) => [m.id, m.metadata]));
+  const ranked = await rerankMatches(player, rawMatches);
+  console.log("🧠 GPT-Ranked Matches:");
+  ranked.forEach((m: any, i: number) =>
+    console.log(`${i + 1}. ${m.username} — ${m.reason}`)
+  );
 }
 
 run();
