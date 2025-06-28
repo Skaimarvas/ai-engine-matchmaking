@@ -1,4 +1,4 @@
-import { index } from "./client/pinecone-client";
+import { index } from "../client/pinecone-client";
 import { embedUserProfile } from "./embed-user";
 
 export async function addUser(user: {

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rerankMatches = rerankMatches;
-const openai_client_1 = require("./client/openai-client");
+const openai_client_1 = require("../client/openai-client");
 function rerankMatches(user, matches) {
     return __awaiter(this, void 0, void 0, function* () {
         const userProfile = `
@@ -41,8 +41,9 @@ Candidate ${i + 1}:
         const prompt = `
 You are an intelligent matchmaking assistant for gamers.
 
-Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match.
-
+Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match. Here is some rules : 
+- If there is no candidate or user, return empty object,
+- If there is no possible match, explain it in message 
 ${userProfile}
 
 ${candidates}

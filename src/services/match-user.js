@@ -9,20 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const add_user_1 = require("./add-user");
-const mock_data_1 = require("./libs/data/mock-data");
-const match_user_1 = require("./match-user");
-const rerank_matches_1 = require("./rerank-matches");
-function run() {
+exports.matchUser = matchUser;
+const pinecone_client_1 = require("../client/pinecone-client");
+const embed_user_1 = require("./embed-user");
+function matchUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const addUsers = () => __awaiter(this, void 0, void 0, function* () {
-            return Promise.all(mock_data_1.matchesArray.map((user) => (0, add_user_1.addUser)(user)));
+        const vector = yield (0, embed_user_1.embedUserProfile)(user);
+        const res = yield pinecone_client_1.index.query({
+            vector,
+            topK: 5,
+            includeMetadata: true,
+            filter: {
+                honor_rating: { $gte: user.honor_rating },
+            },
         });
-        yield addUsers();
-        const rawMatches = yield (0, match_user_1.matchUser)(mock_data_1.player);
-        const ranked = yield (0, rerank_matches_1.rerankMatches)(mock_data_1.player, rawMatches);
-        console.log("🧠 GPT-Ranked Matches:");
-        ranked.forEach((m, i) => console.log(`${i + 1}. ${m.username} — ${m.reason}`));
+        return res.matches;
     });
 }
-run();

@@ -1,4 +1,4 @@
-import { openai } from "./client/openai-client";
+import { openai } from "../client/openai-client";
 
 
 export async function embedUserProfile(profile: {

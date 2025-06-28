@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.embedUserProfile = embedUserProfile;
-const openai_client_1 = require("./client/openai-client");
+const openai_client_1 = require("../client/openai-client");
 function embedUserProfile(profile) {
     return __awaiter(this, void 0, void 0, function* () {
         const input = `

@@ -1,7 +1,7 @@
 // ai-engine/rerankMatches.ts
 
 import { RecordMetadata, RecordSparseValues, RecordValues } from "@pinecone-database/pinecone";
-import { openai } from "./client/openai-client";
+import { openai } from "../client/openai-client";
 
 type Match = {
   id: string;
@@ -51,8 +51,9 @@ Candidate ${i + 1}:
   const prompt = `
 You are an intelligent matchmaking assistant for gamers.
 
-Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match.
-
+Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match. Here is some rules : 
+- If there is no candidate or user, return empty object,
+- If there is no possible match, explain it in message 
 ${userProfile}
 
 ${candidates}

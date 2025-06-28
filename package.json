@@ -1,11 +1,13 @@
 {
   "type": "commonjs",
   "scripts": {
-    "start": "npx tsc && node ./index.js"
+    "start": "npx tsc && node ./index.js",
+    "dev" : "npx tsc && node ./app.js"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^6.1.1",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "openai": "^5.5.1"
   },
   "devDependencies": {

@@ -9,20 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.matchUser = matchUser;
-const pinecone_client_1 = require("./client/pinecone-client");
+exports.addUser = addUser;
+const pinecone_client_1 = require("../client/pinecone-client");
 const embed_user_1 = require("./embed-user");
-function matchUser(user) {
+function addUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         const vector = yield (0, embed_user_1.embedUserProfile)(user);
-        const res = yield pinecone_client_1.index.query({
-            vector,
-            topK: 5,
-            includeMetadata: true,
-            filter: {
-                honor_rating: { $gte: user.honor_rating },
+        yield pinecone_client_1.index.upsert([
+            {
+                id: user.id,
+                values: vector,
+                metadata: {
+                    username: user.username,
+                    games: user.games.join(", "),
+                    availability: user.availability.join(", "),
+                    play_style: user.play_style.join(", "),
+                    honor_rating: user.honor_rating,
+                    bio: user.bio,
+                },
             },
-        });
-        return res.matches;
+        ]);
+        console.log(`✅ User ${user.username} added to Pinecone`);
     });
 }
