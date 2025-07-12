@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.index = exports.pinecone = void 0;
 exports.deleteAllVectors = deleteAllVectors;
+exports.checkPineconeConnection = checkPineconeConnection;
 const pinecone_1 = require("@pinecone-database/pinecone");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -26,6 +27,18 @@ function deleteAllVectors() {
         const index = exports.pinecone.Index(process.env.PINECONE_INDEX_NAME);
         // Delete all vectors (wildcard)
         yield index.deleteAll();
+    });
+}
+function checkPineconeConnection() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield exports.index.describeIndexStats(); // this is a lightweight, safe call
+            return true;
+        }
+        catch (err) {
+            console.error("❌ Pinecone connection failed:", err);
+            return false;
+        }
     });
 }
 exports.index = exports.pinecone.Index(process.env.PINECONE_INDEX_NAME);

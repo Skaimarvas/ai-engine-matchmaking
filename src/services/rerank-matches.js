@@ -41,9 +41,10 @@ Candidate ${i + 1}:
         const prompt = `
 You are an intelligent matchmaking assistant for gamers.
 
-Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match. Here is some rules : 
-- If there is no candidate or user, return empty object,
-- If there is no possible match, explain it in message 
+Given the following player and potential matches, rank the top 3 best matches and explain your reasoning to the user using second-person language kindly. in 1 sentence per match. Here is a rule: 
+- If no candidate, user, or possible match is found, return an object with a status code of 404. The object should also include a message explaining the reason for the 404 status — specifically, that no relevant data was found and Return JSON in this format:
+  { status: 404, message: "..."}
+
 ${userProfile}
 
 ${candidates}
@@ -65,10 +66,22 @@ Return JSON in this format:
 }
 function extractJSONFromResponse(text) {
     try {
-        const jsonStart = text.indexOf("[");
-        const jsonEnd = text.lastIndexOf("]");
-        const json = text.slice(jsonStart, jsonEnd + 1);
-        return JSON.parse(json);
+        // Try to find array
+        const jsonStartArr = text.indexOf("[");
+        const jsonEndArr = text.lastIndexOf("]");
+        if (jsonStartArr !== -1 && jsonEndArr !== -1) {
+            const json = text.slice(jsonStartArr, jsonEndArr + 1);
+            return JSON.parse(json);
+        }
+        // Try to find object
+        const jsonStartObj = text.indexOf("{");
+        const jsonEndObj = text.lastIndexOf("}");
+        if (jsonStartObj !== -1 && jsonEndObj !== -1) {
+            const json = text.slice(jsonStartObj, jsonEndObj + 1);
+            return JSON.parse(json);
+        }
+        // Fallback
+        throw new Error("No valid JSON found");
     }
     catch (e) {
         console.error("❌ Failed to parse GPT response:", text);

@@ -12,4 +12,14 @@ export async function deleteAllVectors() {
   // Delete all vectors (wildcard)
   await index.deleteAll();
 }
+
+export async function checkPineconeConnection() {
+  try {
+    await index.describeIndexStats();
+    return true;
+  } catch (err) {
+    console.error("❌ Pinecone connection failed:", err);
+    return false;
+  }
+}
 export const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
