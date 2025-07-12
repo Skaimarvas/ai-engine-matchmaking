@@ -1,7 +1,7 @@
 {
   "type": "commonjs",
   "scripts": {
-    "start": "npx tsc && node ./index.js",
+    "start": "npx tsc && node ./app.js",
     "dev" : "npx tsc && node ./app.js"
   },
   "dependencies": {

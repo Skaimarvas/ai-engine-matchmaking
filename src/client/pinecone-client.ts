@@ -1,25 +1,55 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-export const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY!,
-});
-export async function deleteAllVectors() {
-  // Adjust index name as needed
-  const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
-  
-  // Delete all vectors (wildcard)
-  await index.deleteAll();
+const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
+const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;
+
+if (!PINECONE_API_KEY || !PINECONE_INDEX_NAME) {
+  throw new Error("Missing required environment variables.");
 }
 
-export async function checkPineconeConnection() {
+export const pinecone = new Pinecone({ apiKey: PINECONE_API_KEY });
+export const index = pinecone.Index(PINECONE_INDEX_NAME);
+
+export async function deleteAllVectors(): Promise<void> {
   try {
-    await index.describeIndexStats();
+    const vectorsExist = await hasVectors();
+    if (!vectorsExist) {
+      console.log("No vectors to delete.");
+      return;
+    }
+
+    console.log("Deleting all vectors...");
+    await index.deleteAll();
+    console.log("All vectors deleted.");
+  } catch (error) {
+    console.error("Failed to delete vectors:", error);
+    throw error;
+  }
+}
+
+export async function checkPineconeConnection(): Promise<boolean> {
+  try {
+    const { indexes } = await pinecone.listIndexes();
+    if (indexes && indexes.length === 0) {
+      throw new Error("No Pinecone indexes found.");
+    }
     return true;
-  } catch (err) {
-    console.error("❌ Pinecone connection failed:", err);
+  } catch (error) {
+    console.error("Pinecone connection failed:", error);
     return false;
   }
 }
-export const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
+
+async function hasVectors(): Promise<boolean> {
+  try {
+    const stats = await index.describeIndexStats();
+    const isRecordExist = stats.totalRecordCount && stats.totalRecordCount > 0
+    return !!isRecordExist;
+  } catch (error) {
+    console.error("Error checking vector stats:", error);
+    throw error;
+  }
+}

@@ -16,21 +16,21 @@ const { deleteAllVectors, checkPineconeConnection } = pineconeClient;
 app.post("/match", async (req, res) => {
   try {
     let ranked;
-    await deleteAllVectors();
+
     const isConnected = await checkPineconeConnection();
     if (!isConnected) {
       return res
         .status(500)
         .json({ error: "Pinecone connection check failed" });
     }
-    //  console.log("What happened in deleteAllVectors", isDeleted)
+
+    await deleteAllVectors();
     const { currentPlayer, players } = req.body;
-    console.log("|| Req.Body ||", req.body);
 
     if (!currentPlayer || !Array.isArray(players)) {
       return res
         .status(400)
-        .json({ error: "player and others array are required" });
+        .json({ error: "currentPlayer and players array are requiredd" });
     }
 
     await Promise.all(players.map((user) => addUser(user)));
@@ -38,7 +38,7 @@ app.post("/match", async (req, res) => {
     const rawMatches = await matchUser(currentPlayer);
     ranked = await rerankMatches(currentPlayer, rawMatches);
 
-    if (ranked.status === 404) {
+    if (ranked && ranked?.status === 404) {
       return res.status(404).json({
         error: ranked.message ?? "No matches found",
         code: 404,
@@ -63,6 +63,6 @@ app.post("/match", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(3001, () => {
+  console.log("Server running on port 3001");
 });
